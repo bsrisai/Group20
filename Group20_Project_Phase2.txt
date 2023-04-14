@@ -1,0 +1,221 @@
+CS425: Database Organization
+Group number : 20
+Project : Real Estate Management Application
+Group Members: SRISAI BODDULURI, DINESH REDDY PATTEM, HIMANSHU KALE
+
+Entities:
+1. CreditCard
+2. Address
+3. ProspectiveRenter 
+4.  RentalPreference 
+5. Users
+6. Agent
+7. Agency
+8. Lease_agreement
+9. Reward_program
+10. Reward_point
+11. Property_booking
+12. Sale
+13. Utilities
+14. Rental
+15. Property
+16. Land
+17. Commercial_building
+18. House
+19. Apartment
+
+Multivalued Attributes:
+1. Expiry_info
+2.  Billing_address
+3. Name
+
+Relational Schema:
+
+
+SQL Scripts:
+
+CREATE TABLE CreditCard (
+    card_number INT PRIMARY KEY,
+    cvv INT not null,
+    card_holdr_name VARCHAR(50) not null,
+    expiry_info_id INT REFERENCES ExpiryInfo(expiry_info_id),
+    billing_addr_id INT REFERENCES Address(addr_id) 
+);
+
+CREATE TABLE Billing_address (
+    billing_addr_id SERIAL PRIMARY KEY,
+    zip TEXT not null,
+    city TEXT not null,
+    state TEXT not null
+);
+
+CREATE TABLE ExpiryInfo (
+    expiry_info_id INT PRIMARY KEY,
+    expiry_month INT not null,
+    expiry_year INT not null
+);
+
+CREATE TABLE Address (
+    addr_id INT PRIMARY KEY,
+    city VARCHAR(50) not null,
+    street_no VARCHAR(50) not null,
+    zip VARCHAR(10) not null,
+    card_number INT REFERENCES CreditCard(card_number)
+);
+
+CREATE TABLE ProspectiveRenter (
+    prospectiverenterid INT PRIMARY KEY,
+    rewards_points INT not null,
+    no_of_pets INT not null,
+    move_in_date DATE not null,
+    addr_id INT REFERENCES Address(addr_id),
+    card_number INT REFERENCES CreditCard(card_number)
+);
+
+CREATE TABLE RentalPreference (
+    rental_preferenceid INT PRIMARY KEY,
+    city VARCHAR(50) not null,
+    budget DECIMAL(10,2) not null,
+    state VARCHAR(50) not null,
+    move_in_date DATE not null,
+    prospectiverenterid INT REFERENCES ProspectiveRenter(prospectiverenterid)
+ );
+
+CREATE TABLE Users (
+    user_id INT PRIMARY KEY,
+    age INT not null,
+    dob DATE not null,
+    password VARCHAR(50) not null,
+    email VARCHAR(100) not null,
+    phonenumber VARCHAR(20) not null,
+    nameid INT REFERENCES Name(nameid),
+    prospectiverenterid INT REFERENCES ProspectiveRenter(prospectiverenterid)
+);
+
+CREATE TABLE Name (
+    nameid INT PRIMARY KEY,
+    age INT not null,
+    password VARCHAR(50) not null,
+    email VARCHAR(100) not null,
+    phonenumber VARCHAR(20) not null
+);
+
+CREATE TABLE Agent (
+    agent_id INT PRIMARY KEY,
+    agency_name VARCHAR(50) not null,
+    rating DECIMAL(3,2) not null,
+    experience INT not null,
+    contact_info VARCHAR(100) not null,
+    job_title VARCHAR(50) not null,
+    user_id INT REFERENCES User(user_id) ,
+    agency_id INT  REFERENCES Agency(agency_id)
+);
+
+CREATE TABLE Agency (
+    agency_id INT PRIMARY KEY,
+    agency_name VARCHAR(50) not null
+);
+
+CREATE TABLE lease_agreement (
+lease_id INTEGER PRIMARY KEY,
+user_sign VARCHAR(255) not null,
+move_in_date DATE not null,
+lease_period INTEGER not null,
+move_out_date DATE not null,
+agency_id INTEGER not null
+);
+
+CREATE TABLE Reward_program (
+id INTEGER PRIMARY KEY,
+Expirationpolicy VARCHAR(255) not null,
+EligiblityCriteria VARCHAR(255) not null,
+Name VARCHAR(255) not null,
+RewardsOffered VARCHAR(255) not null,
+Redemptionprocess VARCHAR(255) not null,
+ProspectiveRenterId INTEGER  REFERENCES prospective_renter(id)
+);
+
+CREATE TABLE Reward_point (
+Reward_points_ID INTEGER PRIMARY KEY,
+User_ID INTEGER  REFERENCES users(id),
+Redemption_history VARCHAR(255) not null,
+Earned_date DATE not null,
+Reward_programme_id INTEGER  REFERENCES reward_program(id),
+Expiry_date DATE  not null
+); 
+
+CREATE TABLE Property_booking (
+PropertyBookingsid INTEGER PRIMARY KEY,
+check_in_date DATE not null,
+check_out_date DATE not null,
+renter_id INTEGER  REFERENCES renter(id),
+Booking_ID INTEGER not null,
+property_id INTEGER  REFERENCES property(propertyid),
+Reward_points_ID INTEGER  REFERENCES reward_point(Reward_points_ID),
+ProspectiveRenterId INTEGER  REFERENCES prospective_renter(id)
+);
+
+CREATE TABLE Sale (
+total_price INTEGER not null,
+utilitiesid INTEGER  REFERENCES utilities(utilitiesid)
+); 
+
+
+CREATE TABLE Utilities (
+utilitiesid INTEGER PRIMARY KEY,
+wifi_bill INTEGER not null,
+gas_bill INTEGER not null,
+electricity_bill INTEGER not null
+);
+
+CREATE TABLE Rental (
+rentalid INTEGER PRIMARY KEY,
+monthly_rental_price INTEGER not null,
+deposit INTEGER not null,
+utilitesid INTEGER  REFERENCES utilities(utilitiesid)
+); 
+
+CREATE TABLE Property (
+propertyid INTEGER PRIMARY KEY,
+square_foot INTEGER not null,
+property_type VARCHAR(255) not null,
+maintenance_fee INTEGER not null,
+market_value INTEGER not null,
+description TEXT not null,
+availability VARCHAR(255) not null
+); 
+
+
+CREATE TABLE Land (
+land_id INTEGER PRIMARY KEY,
+land_type VARCHAR(255) not null,
+development_potential VARCHAR(255) not null,
+topography VARCHAR(255) not null
+);
+
+CREATE TABLE Commercial_building (
+    commercial_building_id int PRIMARY KEY,
+    accessibility TEXT not null,
+    parking_size INTEGER not null,
+    business_type TEXT not null
+);
+
+CREATE TABLE Apartment (
+    apartment_id SERIAL PRIMARY KEY,
+    security_and_safety TEXT not null,
+    amenities TEXT not null,
+    floors INTEGER not null,
+    number_of_rooms INTEGER not null
+);
+
+CREATE TABLE House (
+    house_no SERIAL PRIMARY KEY,
+    security TEXT not null
+); 
+
+
+
+
+
+
+
